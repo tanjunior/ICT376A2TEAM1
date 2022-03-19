@@ -2,9 +2,12 @@ package com.example.photodiary;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -13,6 +16,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -20,6 +24,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.DialogFragment;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -30,8 +39,10 @@ import java.util.Locale;
 
 public class NewEntry extends AppCompatActivity implements LocationListener {
     protected LocationManager locationManager;
-    ImageGridDialogFragment imageFragment = ImageGridDialogFragment.newInstance(30);
-    TextView date, time, location;
+    ImageGridDialogFragment imageFragment = ImageGridDialogFragment.newInstance(20);
+    TextView dateView, timeView, location;
+    Button saveButton;
+    ImageView imageView;
     DialogFragment datePickerFragment, timePickerFragment;
 
     @Override
@@ -40,10 +51,11 @@ public class NewEntry extends AppCompatActivity implements LocationListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_entry);
 
-        date = findViewById(R.id.date);
-        time = findViewById(R.id.time);
+        dateView = findViewById(R.id.date);
+        timeView = findViewById(R.id.time);
         location = findViewById(R.id.location);
-
+        saveButton = findViewById(R.id.button);
+        imageView = findViewById(R.id.imageView);
 
 
 
@@ -84,7 +96,6 @@ public class NewEntry extends AppCompatActivity implements LocationListener {
         if (requestCode == 1 && resultCode == -1) {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
-            ImageView imageView = findViewById(R.id.imageView);
             imageView.setImageBitmap(imageBitmap);
             imageFragment.dismiss();
         }
@@ -127,14 +138,47 @@ public class NewEntry extends AppCompatActivity implements LocationListener {
     private void setDate(LocalDate localDate) {
         DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("MM/dd/yyyy");
         String dateString = dateFormat.format(localDate);
-        date = findViewById(R.id.date);
-        date.setText(dateString);
+        dateView = findViewById(R.id.date);
+        dateView.setText(dateString);
     }
 
     private void setTime(LocalTime localTime) {
         DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("hh:mm a");
         String timeString = timeFormat.format(localTime);
-        time = findViewById(R.id.time);
-        time.setText(timeString);
+        timeView = findViewById(R.id.time);
+        timeView.setText(timeString);
+    }
+
+    private void saveImage(String filename, Bitmap bitmapImage){
+        FileOutputStream outputStream = null;
+        try {
+
+            Log.i("info","filename: "+filename);
+            outputStream = openFileOutput(filename+".jpeg", Context.MODE_PRIVATE);
+            // Use the compress method on the BitMap object to write image to the OutputStream
+            bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.i("info","exception at writeToFile ");
+        } finally {
+            try {
+                outputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+                Log.i("info","exception at writeToFile ");
+            }
+        }
+
+        //shows where the file is stored in the system
+        File filesDir = getFilesDir();
+        Log.i("info",filesDir.getAbsolutePath());
+    }
+
+    public void save(View view) {
+        //TODO: name file by userID-entryID
+        saveImage("testing", ((BitmapDrawable)imageView.getDrawable()).getBitmap());
+
     }
 }

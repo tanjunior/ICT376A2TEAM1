@@ -1,20 +1,25 @@
 package com.example.photodiary;
 
+import android.Manifest;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
 import androidx.activity.result.ActivityResult;
-import androidx.activity.result.contract.ActivityResultContract;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
-
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
+import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,9 +27,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
-
 import com.example.photodiary.databinding.FragmentImageGridDialogItemBinding;
 import com.example.photodiary.databinding.FragmentImageGridDialogBinding;
+
+import java.io.File;
 
 /**
  * <p>A fragment that shows a list of items as a modal bottom sheet.</p>
@@ -105,13 +111,10 @@ public class ImageGridDialogFragment extends BottomSheetDialogFragment {
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
             if (position == 0) {
-                // set the image as camera image
-                holder.image.setImageResource(com.google.android.gms.base.R.drawable.common_google_signin_btn_icon_dark);
                 holder.image.setOnClickListener(new ImageView.OnClickListener() {
                     public void onClick(View v) {
                         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                         try {
-                            //registerForActivityResult(ActivityResultContract<takePictureIntent, onActivityResult()>);
                             getActivity().startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
                         } catch (ActivityNotFoundException e) {
                             // display error state to the user
@@ -119,17 +122,22 @@ public class ImageGridDialogFragment extends BottomSheetDialogFragment {
                     }
                 });
             } else {
+                // place holder image
+                holder.image.setImageResource(com.google.android.gms.base.R.drawable.common_google_signin_btn_icon_dark);
+
                 //TODO: set recent image from album
-                holder.image.setImageResource(com.google.android.gms.base.R.drawable.common_google_signin_btn_text_light);
+                //String filePath = imageFile.getPath();
+                //Bitmap bitmap = BitmapFactory.decodeFile(filePath);
+                //holder.image.setImageBitmap(bitmap);
+
+
                 holder.image.setOnClickListener(new ImageView.OnClickListener() {
                     public void onClick(View v) {
-                        // attach to the form
+                        //TODO: activityForResult
                         Toast.makeText(getActivity() ,Integer.toString(holder.getBindingAdapterPosition()),Toast.LENGTH_SHORT).show();
                     }
                 });
             }
-
-
         }
 
         @Override
