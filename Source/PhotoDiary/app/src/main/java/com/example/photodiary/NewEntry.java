@@ -2,9 +2,9 @@ package com.example.photodiary;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -13,20 +13,18 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.DialogFragment;
-
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -39,7 +37,7 @@ import java.util.Locale;
 
 public class NewEntry extends AppCompatActivity implements LocationListener {
     protected LocationManager locationManager;
-    ImageGridDialogFragment imageFragment = ImageGridDialogFragment.newInstance(20);
+    ImageListDialogFragment imageFragment = ImageListDialogFragment.newInstance(2);
     TextView dateView, timeView, location;
     Button saveButton;
     ImageView imageView;
@@ -98,8 +96,23 @@ public class NewEntry extends AppCompatActivity implements LocationListener {
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             imageView.setImageBitmap(imageBitmap);
             imageFragment.dismiss();
+        } else if (requestCode == 2 && resultCode == -1) {
+            Uri selectedImage = data.getData();
+            String[] filePathColumn = { MediaStore.Images.Media.DATA };
+
+            Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
+            cursor.moveToFirst();
+
+            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+            String picturePath = cursor.getString(columnIndex);
+            cursor.close();
+
+            Bitmap imageBitmap = BitmapFactory.decodeFile(picturePath);
+            imageView.setImageBitmap(imageBitmap);
+            imageFragment.dismiss();
         }
     }
+
     @Override
     public void onLocationChanged(Location location) {
         try {

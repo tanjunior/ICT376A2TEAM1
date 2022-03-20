@@ -1,53 +1,44 @@
 package com.example.photodiary;
 
-import android.Manifest;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
+
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
-import androidx.core.app.ActivityCompat;
-import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
-import com.example.photodiary.databinding.FragmentImageGridDialogItemBinding;
-import com.example.photodiary.databinding.FragmentImageGridDialogBinding;
 
-import java.io.File;
+import com.example.photodiary.databinding.FragmentItemListDialogListDialogItemBinding;
+import com.example.photodiary.databinding.FragmentItemListDialogListDialogBinding;
 
 /**
  * <p>A fragment that shows a list of items as a modal bottom sheet.</p>
  * <p>You can show this modal bottom sheet from your activity like this:</p>
  * <pre>
- *     ImageGridFragment.newInstance(30).show(getSupportFragmentManager(), "dialog");
+ *     ImageListDialogFragment.newInstance(30).show(getSupportFragmentManager(), "dialog");
  * </pre>
  */
-public class ImageGridDialogFragment extends BottomSheetDialogFragment {
+public class ImageListDialogFragment extends BottomSheetDialogFragment {
 
     // TODO: Customize parameter argument names
     private static final String ARG_ITEM_COUNT = "item_count";
-    private FragmentImageGridDialogBinding binding;
+    private FragmentItemListDialogListDialogBinding binding;
 
     // TODO: Customize parameters
-    public static ImageGridDialogFragment newInstance(int itemCount) {
-        final ImageGridDialogFragment fragment = new ImageGridDialogFragment();
+    public static ImageListDialogFragment newInstance(int itemCount) {
+        final ImageListDialogFragment fragment = new ImageListDialogFragment();
         final Bundle args = new Bundle();
         args.putInt(ARG_ITEM_COUNT, itemCount);
         fragment.setArguments(args);
@@ -56,13 +47,10 @@ public class ImageGridDialogFragment extends BottomSheetDialogFragment {
 
     @Nullable
     @Override
-    public View onCreateView(
-            LayoutInflater inflater,
-            @Nullable ViewGroup container,
-            @Nullable Bundle savedInstanceState
-    ) {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
 
-        binding = FragmentImageGridDialogBinding.inflate(inflater, container, false);
+        binding = FragmentItemListDialogListDialogBinding.inflate(inflater, container, false);
         return binding.getRoot();
 
     }
@@ -70,7 +58,7 @@ public class ImageGridDialogFragment extends BottomSheetDialogFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         final RecyclerView recyclerView = (RecyclerView) view;
-        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(new ImageAdapter(getArguments().getInt(ARG_ITEM_COUNT)));
     }
 
@@ -82,11 +70,11 @@ public class ImageGridDialogFragment extends BottomSheetDialogFragment {
 
     private class ViewHolder extends RecyclerView.ViewHolder {
 
-        ImageView image;
+        final TextView text;
 
-        ViewHolder(FragmentImageGridDialogItemBinding binding) {
+        ViewHolder(FragmentItemListDialogListDialogItemBinding binding) {
             super(binding.getRoot());
-            image = binding.image;
+            text = binding.text;
         }
 
     }
@@ -95,6 +83,7 @@ public class ImageGridDialogFragment extends BottomSheetDialogFragment {
 
         private final int mItemCount;
         static final int REQUEST_IMAGE_CAPTURE = 1;
+        static final int PICK_IMAGE_CODE = 2;
 
         ImageAdapter(int itemCount) {
             mItemCount = itemCount;
@@ -104,14 +93,16 @@ public class ImageGridDialogFragment extends BottomSheetDialogFragment {
         @Override
         public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-            return new ViewHolder(FragmentImageGridDialogItemBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
+            return new ViewHolder(FragmentItemListDialogListDialogItemBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
 
         }
 
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
+
             if (position == 0) {
-                holder.image.setOnClickListener(new ImageView.OnClickListener() {
+                holder.text.setText("Camera");
+                holder.text.setOnClickListener(new ImageView.OnClickListener() {
                     public void onClick(View v) {
                         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                         try {
@@ -122,19 +113,17 @@ public class ImageGridDialogFragment extends BottomSheetDialogFragment {
                     }
                 });
             } else {
-                // place holder image
-                holder.image.setImageResource(com.google.android.gms.base.R.drawable.common_google_signin_btn_icon_dark);
-
-                //TODO: set recent image from album
-                //String filePath = imageFile.getPath();
-                //Bitmap bitmap = BitmapFactory.decodeFile(filePath);
-                //holder.image.setImageBitmap(bitmap);
-
-
-                holder.image.setOnClickListener(new ImageView.OnClickListener() {
+                holder.text.setText("Browse");
+                holder.text.setOnClickListener(new ImageView.OnClickListener() {
                     public void onClick(View v) {
-                        //TODO: activityForResult
-                        Toast.makeText(getActivity() ,Integer.toString(holder.getBindingAdapterPosition()),Toast.LENGTH_SHORT).show();
+                        Intent pickPictureIntent = new Intent();
+                        pickPictureIntent.setAction(Intent.ACTION_PICK);
+                        pickPictureIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
+                        try {
+                            getActivity().startActivityForResult(pickPictureIntent, PICK_IMAGE_CODE);
+                        } catch (ActivityNotFoundException e) {
+                            // display error state to the user
+                        }
                     }
                 });
             }
@@ -144,7 +133,6 @@ public class ImageGridDialogFragment extends BottomSheetDialogFragment {
         public int getItemCount() {
             return mItemCount;
         }
-
 
     }
 }

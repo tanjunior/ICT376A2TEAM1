@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clipToPadding="false"
-    android:paddingTop="8dp"
-    android:paddingBottom="8dp"
-    tools:context=".ImageGridDialogFragment"
-    tools:listitem="@layout/fragment_image_grid_dialog_item" />
+    android:paddingTop="@dimen/list_item_spacing_half"
+    android:paddingBottom="@dimen/list_item_spacing_half"
+    tools:context=".ImageListDialogFragment"
+    tools:listitem="@layout/fragment_item_list_dialog_list_dialog_item" />
