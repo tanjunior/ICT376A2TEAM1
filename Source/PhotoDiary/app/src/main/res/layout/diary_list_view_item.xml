@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/listTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/listImage"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/listTitle" />
+
+    <TextView
+        android:id="@+id/listDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="64dp"
+        android:text="TextView"
+        app:layout_constraintStart_toStartOf="@+id/listImage"
+        app:layout_constraintTop_toBottomOf="@+id/listImage" />
+
+    <TextView
+        android:id="@+id/listTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="TextView"
+        app:layout_constraintStart_toEndOf="@+id/listDate"
+        app:layout_constraintTop_toTopOf="@+id/listDate" />
+
+    <TextView
+        android:id="@+id/listLoc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingRight="64dp"
+        android:text="TextView"
+        app:layout_constraintStart_toStartOf="@+id/listDate"
+        app:layout_constraintTop_toBottomOf="@+id/listDate" />
+
+    <TextView
+        android:id="@+id/listDesc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:text="TextView"
+        app:layout_constraintStart_toStartOf="@+id/listImage"
+        app:layout_constraintTop_toBottomOf="@+id/listLoc" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -33,26 +33,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:minHeight="48dp"
-        android:onClick="setLocation"
         android:paddingStart="10dp"
         android:paddingEnd="10dp"
         android:text="Add location"
         app:layout_constraintStart_toStartOf="@+id/date"
         app:layout_constraintTop_toBottomOf="@+id/date" />
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="387dp"
-        android:layout_height="253dp"
-        android:onClick="imageSource"
-        app:layout_constraintEnd_toEndOf="@+id/textInputEditText"
-        app:layout_constraintStart_toStartOf="@+id/textInputEditText"
-        app:layout_constraintTop_toBottomOf="@+id/textInputEditText"
-        app:srcCompat="@android:drawable/ic_menu_gallery"
-        tools:ignore="SpeakableTextPresentCheck" />
-
     <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/textInputEditText"
+        android:id="@+id/description"
         android:layout_width="387dp"
         android:layout_height="65dp"
         android:hint="Description"
@@ -60,6 +48,17 @@
         app:layout_constraintEnd_toEndOf="@+id/title"
         app:layout_constraintStart_toStartOf="@+id/location"
         app:layout_constraintTop_toBottomOf="@+id/location" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="387dp"
+        android:layout_height="253dp"
+        android:onClick="imageSource"
+        app:layout_constraintEnd_toEndOf="@+id/description"
+        app:layout_constraintStart_toStartOf="@+id/description"
+        app:layout_constraintTop_toBottomOf="@+id/description"
+        app:srcCompat="@android:drawable/ic_menu_gallery"
+        tools:ignore="SpeakableTextPresentCheck" />
 
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/title"

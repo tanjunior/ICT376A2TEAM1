@@ -2,6 +2,7 @@ package com.example.photodiary;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -21,9 +22,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.DialogFragment;
+
+import com.example.photodiary.data.model.DiaryModel;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -38,7 +45,7 @@ import java.util.Locale;
 public class NewEntry extends AppCompatActivity implements LocationListener {
     protected LocationManager locationManager;
     ImageListDialogFragment imageFragment = ImageListDialogFragment.newInstance(2);
-    TextView dateView, timeView, location;
+    TextView titleView, dateView, timeView, locationView, descriptionView;
     Button saveButton;
     ImageView imageView;
     DialogFragment datePickerFragment, timePickerFragment;
@@ -49,14 +56,16 @@ public class NewEntry extends AppCompatActivity implements LocationListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_entry);
 
+        titleView = findViewById(R.id.title);
         dateView = findViewById(R.id.date);
         timeView = findViewById(R.id.time);
-        location = findViewById(R.id.location);
+        locationView = findViewById(R.id.location);
+        descriptionView = findViewById(R.id.description);
         saveButton = findViewById(R.id.button);
         imageView = findViewById(R.id.imageView);
 
 
-
+        setLocation();
         //TODO: get zone id using GPS?
         ZoneId zone = ZoneId.of("Asia/Singapore");
         LocalDateTime localDatetime = LocalDateTime.now(zone);
@@ -118,7 +127,7 @@ public class NewEntry extends AppCompatActivity implements LocationListener {
         try {
             Geocoder geo = new Geocoder(this.getApplicationContext(), Locale.getDefault());
             List<Address> addresses = geo.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-            this.location.setText("Loading...");
+            this.locationView.setText("Loading...");
             if (addresses != null && addresses.size() > 0) {
                 String locality = addresses.get(0).getAddressLine(0);
                 String country = addresses.get(0).getCountryName();
@@ -129,18 +138,33 @@ public class NewEntry extends AppCompatActivity implements LocationListener {
                 String locality_city = addresses.get(0).getLocality();
                 String sub_localoty = addresses.get(0).getSubLocality();
                 if (locality != null && country != null) {
-                    this.location.setText(locality + ", " + (sub_localoty != null ? sub_localoty + ", " : "")  + (locality_city != null ? locality_city + ", " : "" ) + (city != null ? city + ", " : "")  + (sub_admin != null ? sub_admin + ", " : "") + (state != null ? state + ", " : "") + country + ", " + (pincode != null ? pincode : ""));
+                    this.locationView.setText(locality + ", " + (sub_localoty != null ? sub_localoty + ", " : "")  + (locality_city != null ? locality_city + ", " : "" ) + (city != null ? city + ", " : "")  + (sub_admin != null ? sub_admin + ", " : "") + (state != null ? state + ", " : "") + country + ", " + (pincode != null ? pincode : ""));
                 } else {
-                    this.location.setText("Location could not be fetched...");
+                    this.locationView.setText("Location could not be fetched...");
                 }
             }
         } catch (Exception e) {
-            this.location.setText("Location could not be fetched...");
+            this.locationView.setText("Location could not be fetched...");
             e.printStackTrace(); // getFromLocation() may sometimes fail
         }
     }
 
-    public void setLocation(View view) {
+    @Override
+    public void onProviderEnabled(@NonNull String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(@NonNull String provider) {
+
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    public void setLocation() {
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 44);
@@ -162,21 +186,21 @@ public class NewEntry extends AppCompatActivity implements LocationListener {
         timeView.setText(timeString);
     }
 
-    private void saveImage(String filename, Bitmap bitmapImage){
+    private String saveImage(String filename, Bitmap bitmapImage){
         FileOutputStream outputStream = null;
-        try {
+        Log.i("image","filename: "+filename);
 
-            Log.i("info","filename: "+filename);
-            outputStream = openFileOutput(filename+".jpeg", Context.MODE_PRIVATE);
+        try {
+            outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
             // Use the compress method on the BitMap object to write image to the OutputStream
             bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
 
 
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
             Log.i("info","exception at writeToFile ");
         } finally {
-            try {
+           try {
                 outputStream.close();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -186,12 +210,35 @@ public class NewEntry extends AppCompatActivity implements LocationListener {
 
         //shows where the file is stored in the system
         File filesDir = getFilesDir();
-        Log.i("info",filesDir.getAbsolutePath());
+        Log.i("image",filesDir.getAbsolutePath());
+        return filesDir.getAbsolutePath();
     }
 
     public void save(View view) {
-        //TODO: name file by userID-entryID
-        saveImage("testing", ((BitmapDrawable)imageView.getDrawable()).getBitmap());
+        int userid = 1;
+        DatabaseHelper databaseHelper = new DatabaseHelper(getApplicationContext());
+        String title = titleView.getText().toString();
+
+        String date = dateView.getText().toString();
+        String time = timeView.getText().toString();
+
+        //convert String to LocalDate and LocalTime
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("hh:mm a");
+        LocalDate localDate = LocalDate.parse(date, dateFormat);
+        LocalTime localTime = LocalTime.parse(time, timeFormat);
+
+        String loc = locationView.getText().toString();
+        String desc = descriptionView.getText().toString();
+
+        Bitmap bitmap = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
+
+        String filename = userid+"-"+localDate+"-"+localTime+".jpeg";
+        String imagePath = saveImage(filename, bitmap);
+
+        DiaryModel diaryModel = new DiaryModel(0, title, date, time, loc, desc, filename, imagePath, userid);
+        boolean added = databaseHelper.addDiary(diaryModel);
+        if (added) finish();
 
     }
 }

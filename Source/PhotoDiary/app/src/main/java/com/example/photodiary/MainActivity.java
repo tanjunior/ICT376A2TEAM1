@@ -3,53 +3,48 @@ package com.example.photodiary;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
+import com.example.photodiary.data.model.UserModel;
 import android.view.View;
-import com.example.photodiary.databinding.ActivityMainBinding;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.widget.EditText;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ActivityMainBinding binding;
+    EditText username, password;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
-
-        setSupportActionBar(binding.toolbar);
-
-
-        binding.fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, NewEntry.class));
-            }
-        });
+        setContentView(R.layout.activity_main);
+        username = findViewById(R.id.username);
+        password = findViewById(R.id.password);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+    public void login(View view) {
+        String enteredPassword = password.getText().toString();
+        String enteredUsername = username.getText().toString();
+        DatabaseHelper db = new DatabaseHelper(this);
+        UserModel user = db.getUser(enteredUsername);
+        if (enteredPassword.equals(user.getPassword())) {
+            Intent i = new Intent(MainActivity.this, UserLanding.class);
+            i.putExtra("USER_ID", user.getId());
+            startActivity(i);
+        } else {
+            Toast.makeText(this,"Wrong Username/Password",Toast.LENGTH_SHORT).show();
         }
-
-        return super.onOptionsItemSelected(item);
     }
 
+    public void newUser(View view) {
+        startActivity(new Intent(this, NewUser.class));
+    }
+
+    public void testUser(View view) {
+        DatabaseHelper db = new DatabaseHelper(this);
+        final boolean test = db.checkIfUserExists("test");
+        if (!test) db.addUser("test", "1234");
+
+        Intent i = new Intent(MainActivity.this, UserLanding.class);
+        i.putExtra("USER_ID", 1);
+        startActivity(i);
+    }
 }
