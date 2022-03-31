@@ -24,6 +24,7 @@ public class UserLanding extends AppCompatActivity {
 
         if (intent != null) {
             userId = intent.getIntExtra("USER_ID", 0);
+            UserLanding.this.setTitle(intent.getStringExtra("USER_NAME"));
         } else {
             finish();
         }

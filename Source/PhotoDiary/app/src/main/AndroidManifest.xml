@@ -46,11 +46,11 @@
         <activity
             android:name=".UserLanding"
             android:exported="false"
-            android:label="@string/title_activity_user_landing"
             android:theme="@style/Theme.PhotoDiary.NoActionBar" />
         <activity
             android:name=".NewEntry"
-            android:exported="false" />
+            android:exported="false"
+            android:label="Add New Entry" />
     </application>
 
 </manifest>

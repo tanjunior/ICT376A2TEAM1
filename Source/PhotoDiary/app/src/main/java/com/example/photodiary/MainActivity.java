@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
         if (enteredPassword.equals(user.getPassword())) {
             Intent i = new Intent(MainActivity.this, UserLanding.class);
             i.putExtra("USER_ID", user.getId());
+            i.putExtra("USER_NAME", user.getUsername());
             startActivity(i);
         } else {
             Toast.makeText(this,"Wrong Username/Password",Toast.LENGTH_SHORT).show();
@@ -45,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
 
         Intent i = new Intent(MainActivity.this, UserLanding.class);
         i.putExtra("USER_ID", 1);
+        i.putExtra("USER_NAME", "test");
         startActivity(i);
     }
 }
