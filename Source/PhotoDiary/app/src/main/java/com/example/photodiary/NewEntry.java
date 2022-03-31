@@ -49,12 +49,21 @@ public class NewEntry extends AppCompatActivity implements LocationListener {
     Button saveButton;
     ImageView imageView;
     DialogFragment datePickerFragment, timePickerFragment;
+    int userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_entry);
+
+        Intent intent = getIntent();
+
+        if (intent != null) {
+            userId = intent.getIntExtra("USER_ID", 0);
+        } else {
+            finish();
+        }
 
         titleView = findViewById(R.id.title);
         dateView = findViewById(R.id.date);
@@ -215,7 +224,6 @@ public class NewEntry extends AppCompatActivity implements LocationListener {
     }
 
     public void save(View view) {
-        int userid = 1;
         DatabaseHelper databaseHelper = new DatabaseHelper(getApplicationContext());
         String title = titleView.getText().toString();
 
@@ -233,10 +241,10 @@ public class NewEntry extends AppCompatActivity implements LocationListener {
 
         Bitmap bitmap = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
 
-        String filename = userid+"-"+localDate+"-"+localTime+".jpeg";
+        String filename = userId+"-"+localDate+"-"+localTime+".jpeg";
         String imagePath = saveImage(filename, bitmap);
 
-        DiaryModel diaryModel = new DiaryModel(0, title, date, time, loc, desc, filename, imagePath, userid);
+        DiaryModel diaryModel = new DiaryModel(0, title, date, time, loc, desc, filename, imagePath, userId);
         boolean added = databaseHelper.addDiary(diaryModel);
         if (added) finish();
 

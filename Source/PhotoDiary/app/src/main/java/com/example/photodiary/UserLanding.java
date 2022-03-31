@@ -35,7 +35,10 @@ public class UserLanding extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(UserLanding.this, NewEntry.class));
+
+                Intent i = new Intent(UserLanding.this, NewEntry.class);
+                i.putExtra("USER_ID", userId);
+                startActivity(i);
             }
         });
         databaseHelper = new DatabaseHelper(this);
