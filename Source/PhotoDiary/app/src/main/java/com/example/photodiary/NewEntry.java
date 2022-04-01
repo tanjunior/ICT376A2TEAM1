@@ -43,6 +43,9 @@ import java.util.List;
 import java.util.Locale;
 
 public class NewEntry extends AppCompatActivity implements LocationListener {
+
+    public static String INTENT_USER_ID = "USER_ID";
+
     protected LocationManager locationManager;
     ImageListDialogFragment imageFragment = ImageListDialogFragment.newInstance(2);
     TextView titleView, dateView, timeView, locationView, descriptionView;
@@ -215,7 +218,7 @@ public class NewEntry extends AppCompatActivity implements LocationListener {
     }
 
     public void save(View view) {
-        int userid = 1;
+        int userId = getIntent().getIntExtra(INTENT_USER_ID, 1);;
         DatabaseHelper databaseHelper = new DatabaseHelper(getApplicationContext());
         String title = titleView.getText().toString();
 
@@ -233,10 +236,10 @@ public class NewEntry extends AppCompatActivity implements LocationListener {
 
         Bitmap bitmap = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
 
-        String filename = userid+"-"+localDate+"-"+localTime+".jpeg";
+        String filename = userId+"-"+localDate+"-"+localTime+".jpeg";
         String imagePath = saveImage(filename, bitmap);
 
-        DiaryModel diaryModel = new DiaryModel(0, title, date, time, loc, desc, filename, imagePath, userid);
+        DiaryModel diaryModel = new DiaryModel(0, title, date, time, loc, desc, filename, imagePath, userId);
         boolean added = databaseHelper.addDiary(diaryModel);
         if (added) finish();
 

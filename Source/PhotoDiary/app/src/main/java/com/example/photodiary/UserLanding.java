@@ -23,8 +23,7 @@ public class UserLanding extends AppCompatActivity {
         Intent intent = getIntent();
 
         if (intent != null) {
-            userId = intent.getIntExtra("USER_ID", 0);
-            UserLanding.this.setTitle(intent.getStringExtra("USER_NAME"));
+            userId = intent.getIntExtra("USER_ID", 1);
         } else {
             finish();
         }
@@ -32,11 +31,10 @@ public class UserLanding extends AppCompatActivity {
         FloatingActionButton fab = findViewById(R.id.fab);
         recyclerView = findViewById(R.id.rView);
 
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(UserLanding.this, NewEntry.class));
-            }
+        fab.setOnClickListener(view -> {
+            Intent newIntent = new Intent(UserLanding.this, NewEntry.class);
+            newIntent.putExtra(NewEntry.INTENT_USER_ID, userId);
+            startActivity(newIntent);
         });
         databaseHelper = new DatabaseHelper(this);
     }
@@ -45,6 +43,8 @@ public class UserLanding extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         showUserDiaries();
+        String name = databaseHelper.getUserById(userId).getName();
+        setTitle(name);
     }
 
     private void showUserDiaries() {
