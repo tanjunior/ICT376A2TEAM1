@@ -33,7 +33,7 @@ public class UserLanding extends AppCompatActivity {
 
         fab.setOnClickListener(view -> {
             Intent newIntent = new Intent(UserLanding.this, NewEntry.class);
-            newIntent.putExtra(NewEntry.INTENT_USER_ID, userId);
+            newIntent.putExtra("USER_ID", userId);
             startActivity(newIntent);
         });
         databaseHelper = new DatabaseHelper(this);

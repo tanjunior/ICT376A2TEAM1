@@ -44,20 +44,27 @@ import java.util.Locale;
 
 public class NewEntry extends AppCompatActivity implements LocationListener {
 
-    public static String INTENT_USER_ID = "USER_ID";
-
     protected LocationManager locationManager;
     ImageListDialogFragment imageFragment = ImageListDialogFragment.newInstance(2);
     TextView titleView, dateView, timeView, locationView, descriptionView;
     Button saveButton;
     ImageView imageView;
     DialogFragment datePickerFragment, timePickerFragment;
+    int userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_entry);
+
+        Intent intent = getIntent();
+
+        if (intent != null) {
+            userId = intent.getIntExtra("USER_ID", 1);
+        } else {
+            finish();
+        }
 
         titleView = findViewById(R.id.title);
         dateView = findViewById(R.id.date);
@@ -218,7 +225,6 @@ public class NewEntry extends AppCompatActivity implements LocationListener {
     }
 
     public void save(View view) {
-        int userId = getIntent().getIntExtra(INTENT_USER_ID, 1);;
         DatabaseHelper databaseHelper = new DatabaseHelper(getApplicationContext());
         String title = titleView.getText().toString();
 
