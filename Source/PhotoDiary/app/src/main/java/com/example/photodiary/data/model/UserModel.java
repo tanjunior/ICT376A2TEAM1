@@ -1,17 +1,26 @@
 package com.example.photodiary.data.model;
 
+import java.util.Date;
+
 public class UserModel {
     private int id;
-    private String username;
+    private String email;
+    private String name;
     private String password;
+    private String gender;
+    private Date dob;
+    private String profilePhotoPath;
 
-    public UserModel(int id, String username, String password) {
+    public UserModel() {}
+
+    public UserModel(int id, String email, String name, String password, String gender, Date dob, String profilePhotoPath) {
         this.id = id;
-        this.username = username;
+        this.email = email;
+        this.name = name;
         this.password = password;
-    }
-
-    public UserModel() {
+        this.gender = gender;
+        this.dob = dob;
+        this.profilePhotoPath = profilePhotoPath;
     }
 
     public int getId() {
@@ -22,21 +31,12 @@ public class UserModel {
         this.id = id;
     }
 
-    @Override
-    public String toString() {
-        return "UserModel{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                '}';
+    public String getName() {
+        return name;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getPassword() {
@@ -45,5 +45,50 @@ public class UserModel {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getProfilePhotoPath() {
+        return profilePhotoPath;
+    }
+
+    public void setProfilePhotoPath(String profilePhotoPath) {
+        this.profilePhotoPath = profilePhotoPath;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public Date getDob() {
+        return dob;
+    }
+
+    public void setDob(Date dob) {
+        this.dob = dob;
+    }
+
+    @Override
+    public String toString() {
+        return "UserModel{" +
+                "id=" + id +
+                ", email='" + email + '\'' +
+                ", name='" + name + '\'' +
+                ", password='" + password + '\'' +
+                ", gender='" + gender + '\'' +
+                ", dob=" + dob +
+                ", profilePhotoPath='" + profilePhotoPath + '\'' +
+                '}';
     }
 }

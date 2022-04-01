@@ -43,6 +43,7 @@ import java.util.List;
 import java.util.Locale;
 
 public class NewEntry extends AppCompatActivity implements LocationListener {
+
     protected LocationManager locationManager;
     ImageListDialogFragment imageFragment = ImageListDialogFragment.newInstance(2);
     TextView titleView, dateView, timeView, locationView, descriptionView;
@@ -60,7 +61,7 @@ public class NewEntry extends AppCompatActivity implements LocationListener {
         Intent intent = getIntent();
 
         if (intent != null) {
-            userId = intent.getIntExtra("USER_ID", 0);
+            userId = intent.getIntExtra("USER_ID", 1);
         } else {
             finish();
         }

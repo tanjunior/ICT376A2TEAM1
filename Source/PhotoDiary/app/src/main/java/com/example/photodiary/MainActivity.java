@@ -10,28 +10,37 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
-    EditText username, password;
+    EditText etEmail, etPassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        username = findViewById(R.id.username);
-        password = findViewById(R.id.password);
+        etEmail = findViewById(R.id.etEmail);
+        etPassword = findViewById(R.id.etPassword);
     }
 
     public void login(View view) {
-        String enteredPassword = password.getText().toString();
-        String enteredUsername = username.getText().toString();
+        String email = etEmail.getText().toString();
+        if (email.trim().isEmpty()) {
+            Toast.makeText(this, "Email cannot be empty", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String password = etPassword.getText().toString();
+        if (password.trim().isEmpty()) {
+            Toast.makeText(this, "Password cannot be empty", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         DatabaseHelper db = new DatabaseHelper(this);
-        UserModel user = db.getUser(enteredUsername);
-        if (enteredPassword.equals(user.getPassword())) {
+        UserModel user = db.getUserByEmail(email);
+        if (password.equals(user.getPassword())) {
             Intent i = new Intent(MainActivity.this, UserLanding.class);
             i.putExtra("USER_ID", user.getId());
-            i.putExtra("USER_NAME", user.getUsername());
             startActivity(i);
         } else {
-            Toast.makeText(this,"Wrong Username/Password",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,"Wrong Email/Password",Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -40,13 +49,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void testUser(View view) {
-        DatabaseHelper db = new DatabaseHelper(this);
-        final boolean test = db.checkIfUserExists("test");
-        if (!test) db.addUser("test", "1234");
-
         Intent i = new Intent(MainActivity.this, UserLanding.class);
         i.putExtra("USER_ID", 1);
-        i.putExtra("USER_NAME", "test");
         startActivity(i);
     }
 }
