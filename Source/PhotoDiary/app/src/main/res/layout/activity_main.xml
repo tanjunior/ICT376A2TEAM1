@@ -4,88 +4,69 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingHorizontal="48dp"
     tools:context=".MainActivity">
 
-    <ImageView
-        android:id="@+id/ivLogo"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        app:srcCompat="@drawable/logo_photo_library"
-        android:layout_marginTop="48dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
 
-    <TextView
-        android:id="@+id/tvLogo"
+    <EditText
+        android:id="@+id/username"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/app_name"
-        android:layout_marginTop="4dp"
-        style="@style/TextAppearance.MaterialComponents.Headline6"
-        app:layout_constraintTop_toBottomOf="@id/ivLogo"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <EditText
-        android:id="@+id/etEmail"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Email"
-        android:inputType="text"
+        android:layout_marginTop="292dp"
+        android:ems="10"
+        android:hint="Username"
+        android:inputType="textPersonName"
+        android:minHeight="48dp"
         android:textColorHint="#757575"
-        app:layout_constraintVertical_bias="0.1"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvLogo"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/etPassword"
-        android:layout_width="match_parent"
+        android:id="@+id/password"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:ems="10"
         android:hint="Password"
-        android:inputType="textPassword"
+        android:inputType="textPersonName"
+        android:minHeight="48dp"
         android:textColorHint="#757575"
-        android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etEmail" />
+        app:layout_constraintTop_toBottomOf="@+id/username" />
 
     <Button
-        android:id="@+id/btnLogin"
-        android:layout_width="match_parent"
+        android:id="@+id/loginButton"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="24dp"
         android:onClick="login"
-        android:text="Login"
-        android:textAllCaps="false"
+        android:text="login"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etPassword" />
+        app:layout_constraintTop_toBottomOf="@+id/password" />
 
     <Button
-        android:id="@+id/btnLoginTestAcc"
-        android:layout_width="match_parent"
+        android:id="@+id/newUser"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="testUser"
-        android:text="Login with test account"
-        android:textAllCaps="false"
-        app:layout_constraintTop_toBottomOf="@id/btnLogin"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/btnRegister"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="40dp"
         android:onClick="newUser"
-        android:text="Register new account"
-        android:textAllCaps="false"
+        android:text="New User"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="140dp"
+        android:onClick="testUser"
+        android:text="user:test, password:1234"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.492"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
