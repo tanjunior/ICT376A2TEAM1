@@ -123,6 +123,8 @@ public class NewUser extends AppCompatActivity {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
+            imageFragment.dismiss();
         } else if (requestCode == REQUEST_GALLERY_IMAGE && resultCode == RESULT_OK) {
             Uri selectedImage = data.getData();
             String[] filePathColumn = { MediaStore.Images.Media.DATA };
