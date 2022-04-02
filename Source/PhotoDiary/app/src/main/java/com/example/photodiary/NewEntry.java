@@ -186,7 +186,7 @@ public class NewEntry extends AppCompatActivity implements LocationListener {
     }
 
     private void setDate(LocalDate localDate) {
-        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd MMMM yyyy");
         String dateString = dateFormat.format(localDate);
         dateView = findViewById(R.id.date);
         dateView.setText(dateString);
@@ -237,7 +237,7 @@ public class NewEntry extends AppCompatActivity implements LocationListener {
         String time = timeView.getText().toString();
 
         //convert String to LocalDate and LocalTime
-        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd MMMM yyyy");
         DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("hh:mm a");
         LocalDate localDate = LocalDate.parse(date, dateFormat);
         LocalTime localTime = LocalTime.parse(time, timeFormat);
