@@ -18,6 +18,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -57,6 +58,8 @@ public class NewEntry extends AppCompatActivity implements LocationListener {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_entry);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
 
@@ -251,5 +254,16 @@ public class NewEntry extends AppCompatActivity implements LocationListener {
         boolean added = databaseHelper.addDiary(diaryModel);
         if (added) finish();
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }
