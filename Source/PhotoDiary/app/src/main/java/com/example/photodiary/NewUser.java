@@ -1,13 +1,10 @@
 package com.example.photodiary;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.FileProvider;
 
 import android.app.AlertDialog;
-import android.app.DatePickerDialog;
-import android.content.ActivityNotFoundException;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -15,32 +12,35 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.View;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 public class NewUser extends AppCompatActivity {
 
     private static final int REQUEST_IMAGE_CAPTURE = 1;
+    private static final int REQUEST_GALLERY_IMAGE = 2;
 
     private String profilePhotoPath;
 
     private ImageView ivProfile;
     private EditText etEmail, etName, etPassword, etGender, etDob;
 
+    ImageListDialogFragment imageFragment = ImageListDialogFragment.newInstance(2);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_user);
 
+        DatePickerFragment datePickerFragment = new DatePickerFragment();
         // init views
         ivProfile = findViewById(R.id.ivProfile);
         etEmail = findViewById(R.id.etEmail);
@@ -53,22 +53,20 @@ public class NewUser extends AppCompatActivity {
         String[] genders = {"Male", "Female", "Custom"};
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Select gender");
-        builder.setItems(genders, (dialog, which) -> {
-            etGender.setText(genders[which]);
-        });
-        etGender.setOnClickListener(view -> builder.show());
+        builder.setItems(genders, (dialog, which) -> etGender.setText(genders[which]));
 
-        // dob picker
-        DatePickerDialog.OnDateSetListener dateSetListener = (view, year, month, day) -> {
-            int actualMonth = month + 1;
-            etDob.setText(day + "/" + actualMonth + "/" + year);
-        };
-        etDob.setOnClickListener(view -> {
-            Calendar calendar= Calendar.getInstance();
-            DatePickerDialog datePickerDialog = new DatePickerDialog(NewUser.this, dateSetListener, calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH),calendar.get(Calendar.DAY_OF_MONTH));
-            datePickerDialog.getDatePicker().setMaxDate(calendar.getTimeInMillis());
-            datePickerDialog.setTitle("Select date of birth");
-            datePickerDialog.show();
+        // view onclick listener
+        etGender.setOnClickListener(view -> builder.show());
+        etDob.setOnClickListener(view -> datePickerFragment.show(getSupportFragmentManager(), "datePicker"));
+        ivProfile.setOnClickListener(view -> imageFragment.show(getSupportFragmentManager(), "dialog"));
+
+        // fragment result listener
+        getSupportFragmentManager().setFragmentResultListener("request_Key", this, (requestKey, bundle) -> {
+            if (bundle.containsKey("date")) {
+                DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                String dateString = dateFormat.format((LocalDate)bundle.getSerializable("date"));
+                etDob.setText(dateString);
+            }
         });
     }
 
@@ -101,16 +99,6 @@ public class NewUser extends AppCompatActivity {
         }
     }
 
-    public void dispatchTakePictureIntent(View view) {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        try {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-        } catch (ActivityNotFoundException e) {
-            e.printStackTrace();
-        }
-
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -135,6 +123,21 @@ public class NewUser extends AppCompatActivity {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        } else if (requestCode == REQUEST_GALLERY_IMAGE && resultCode == RESULT_OK) {
+            Uri selectedImage = data.getData();
+            String[] filePathColumn = { MediaStore.Images.Media.DATA };
+
+            Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
+            cursor.moveToFirst();
+
+            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+            String picturePath = cursor.getString(columnIndex);
+            cursor.close();
+
+            Bitmap imageBitmap = BitmapFactory.decodeFile(picturePath);
+            ivProfile.setImageBitmap(imageBitmap);
+            imageFragment.dismiss();
+
         }
     }
 }

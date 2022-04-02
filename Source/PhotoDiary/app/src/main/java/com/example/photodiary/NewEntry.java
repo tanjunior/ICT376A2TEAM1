@@ -2,7 +2,6 @@ package com.example.photodiary;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -22,7 +21,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -144,11 +142,11 @@ public class NewEntry extends AppCompatActivity implements LocationListener {
                 String state = addresses.get(0).getAdminArea();
                 String sub_admin = addresses.get(0).getSubAdminArea();
                 String city = addresses.get(0).getFeatureName();
-                String pincode = addresses.get(0).getPostalCode();
+                String postal_code = addresses.get(0).getPostalCode();
                 String locality_city = addresses.get(0).getLocality();
-                String sub_localoty = addresses.get(0).getSubLocality();
+                String sub_locality = addresses.get(0).getSubLocality();
                 if (locality != null && country != null) {
-                    this.locationView.setText(locality + ", " + (sub_localoty != null ? sub_localoty + ", " : "")  + (locality_city != null ? locality_city + ", " : "" ) + (city != null ? city + ", " : "")  + (sub_admin != null ? sub_admin + ", " : "") + (state != null ? state + ", " : "") + country + ", " + (pincode != null ? pincode : ""));
+                    this.locationView.setText(locality + ", " + (sub_locality != null ? sub_locality + ", " : "")  + (locality_city != null ? locality_city + ", " : "" ) + (city != null ? city + ", " : "")  + (sub_admin != null ? sub_admin + ", " : "") + (state != null ? state + ", " : "") + country + ", " + (postal_code != null ? postal_code : ""));
                 } else {
                     this.locationView.setText("Location could not be fetched...");
                 }
@@ -212,11 +210,13 @@ public class NewEntry extends AppCompatActivity implements LocationListener {
             e.printStackTrace();
             Log.i("info","exception at writeToFile ");
         } finally {
-           try {
-                outputStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-                Log.i("info","exception at writeToFile ");
+            if (outputStream != null) {
+                try {
+                    outputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Log.i("info","exception at writeToFile ");
+                }
             }
         }
 
