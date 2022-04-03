@@ -222,4 +222,23 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
         return insert != -1;
     }
+
+    public boolean deleteDiary(int diaryID) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        final int delete = db.delete(DIARY_TABLE, DIARY_ID + " = ?", new String[]{Integer.toString(diaryID)});
+        db.close();
+        return delete > 0;
+    }
+
+    public boolean updateDiary(int diaryID, String title, String desc) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(DIARY_TITLE, title);
+        cv.put(DIARY_DESCRIPTION, desc);
+
+        int update = db.update(DIARY_TABLE, cv, DIARY_ID + " = ?", new String[]{String.valueOf(diaryID)});
+        Log.d("updateDiary", "success"+update);
+        db.close();
+        return update > 0;
+    }
 }

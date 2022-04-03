@@ -48,39 +48,6 @@
                     tools:layout_editor_absoluteX="157dp" />
 
 
-                <TextView
-                    android:id="@+id/listDate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="TextView"
-                    tools:layout_editor_absoluteX="64dp"
-                    tools:layout_editor_absoluteY="32dp" />
-
-                <TextView
-                    android:id="@+id/listTime"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="TextView"
-                    tools:layout_editor_absoluteX="130dp"
-                    tools:layout_editor_absoluteY="32dp" />
-
-                <TextView
-                    android:id="@+id/listLoc"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingRight="64dp"
-                    android:text="TextView"
-                    tools:layout_editor_absoluteX="64dp"
-                    tools:layout_editor_absoluteY="52dp" />
-
-                <TextView
-                    android:id="@+id/listDesc"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="TextView"
-                    tools:layout_editor_absoluteX="32dp"
-                    tools:layout_editor_absoluteY="71dp" />
-
             </LinearLayout>
 
 
