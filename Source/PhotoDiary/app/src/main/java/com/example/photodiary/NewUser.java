@@ -1,35 +1,33 @@
 package com.example.photodiary;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 
 public class NewUser extends AppCompatActivity {
 
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int REQUEST_GALLERY_IMAGE = 2;
-
-    private String profilePhotoPath;
 
     private ImageView ivProfile;
     private EditText etEmail, etName, etPassword, etGender, etDob;
@@ -90,8 +88,28 @@ public class NewUser extends AppCompatActivity {
             return;
         }
 
+        Bitmap bitmap;
+        try {
+            bitmap = ((BitmapDrawable)ivProfile.getDrawable()).getBitmap();
+        } catch (ClassCastException e) {
+            Toast.makeText(this, "Profile Picture cannot be empty", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // save to file
+        ZoneId zone = ZoneId.of("Asia/Singapore");
+        LocalDateTime localDatetime = LocalDateTime.now(zone);
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
+        String timeStamp = dateFormat.format(localDatetime);
+        String imageFileName = "JPEG_" + timeStamp + "_.jpeg";
+
+
+
+        String imagePath = saveImage(imageFileName, bitmap);
+
+
         DatabaseHelper db = new DatabaseHelper(this);
-        boolean b = db.addUser(email, name, password, etGender.getText().toString(), etDob.getText().toString(), profilePhotoPath);
+        boolean b = db.addUser(email, name, password, etGender.getText().toString(), etDob.getText().toString(), imagePath);
         if (b) {
             finish();
             Toast.makeText(this,"User created successfully",Toast.LENGTH_SHORT).show();
@@ -110,21 +128,6 @@ public class NewUser extends AppCompatActivity {
 
             // update view
             ivProfile.setImageBitmap(imageBitmap);
-
-            // save to file
-            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-            String imageFileName = "JPEG_" + timeStamp + "_";
-            File sd = Environment.getExternalStorageDirectory();
-            File dest = new File(sd, imageFileName);
-            try {
-                FileOutputStream out = new FileOutputStream(dest);
-                imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
-                out.close();
-                profilePhotoPath = dest.getAbsolutePath();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
             imageFragment.dismiss();
         } else if (requestCode == REQUEST_GALLERY_IMAGE && resultCode == RESULT_OK) {
 
@@ -138,5 +141,35 @@ public class NewUser extends AppCompatActivity {
 
             imageFragment.dismiss();
         }
+    }
+
+    private String saveImage(String filename, Bitmap bitmapImage){
+        FileOutputStream outputStream = null;
+        Log.i("image","filename: "+filename);
+
+        try {
+            outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
+            // Use the compress method on the BitMap object to write image to the OutputStream
+            bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.i("info","exception at writeToFile ");
+        } finally {
+            if (outputStream != null) {
+                try {
+                    outputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Log.i("info","exception at writeToFile ");
+                }
+            }
+        }
+
+        //shows where the file is stored in the system
+        File filesDir = getFilesDir();
+        Log.i("image",filesDir.getAbsolutePath());
+        return filesDir.getAbsolutePath();
     }
 }

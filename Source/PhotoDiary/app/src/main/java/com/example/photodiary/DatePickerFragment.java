@@ -18,7 +18,7 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
         ZoneId zone = ZoneId.of("Asia/Singapore");
         LocalDate localDate = LocalDate.now(zone);
         int year = localDate.getYear();
-        int month = localDate.getMonthValue();
+        int month = localDate.getMonthValue()-1;
         int day = localDate.getDayOfMonth();
 
         // Create a new instance of DatePickerDialog and return it
@@ -27,7 +27,7 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
 
     public void onDateSet(DatePicker view, int year, int month, int day) {
         Bundle bundle = new Bundle();
-        bundle.putSerializable("date", LocalDate.of(year,month,day));
+        bundle.putSerializable("date", LocalDate.of(year,month+1,day));
         requireActivity().getSupportFragmentManager().setFragmentResult("request_Key", bundle);
     }
 

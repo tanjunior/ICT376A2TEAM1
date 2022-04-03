@@ -2,12 +2,9 @@ package com.example.photodiary;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.Address;
 import android.location.Geocoder;
@@ -23,7 +20,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -46,6 +42,8 @@ import java.util.Locale;
 public class NewEntry extends AppCompatActivity implements LocationListener {
 
     protected LocationManager locationManager;
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
+    private static final int REQUEST_GALLERY_IMAGE = 2;
     ImageListDialogFragment imageFragment = ImageListDialogFragment.newInstance(2);
     TextView titleView, dateView, timeView, locationView, descriptionView;
     Button saveButton;
@@ -113,12 +111,12 @@ public class NewEntry extends AppCompatActivity implements LocationListener {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Log.d("onActivityResult", "requestCode: " + requestCode + " resultCode: " + resultCode);
-        if (requestCode == 1 && resultCode == RESULT_OK) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             imageView.setImageBitmap(imageBitmap);
             imageFragment.dismiss();
-        } else if (requestCode == 2 && resultCode == RESULT_OK) {
+        } else if (requestCode == REQUEST_GALLERY_IMAGE && resultCode == RESULT_OK) {
             try {
                 Uri uri = data.getData();
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
@@ -143,11 +141,11 @@ public class NewEntry extends AppCompatActivity implements LocationListener {
                 String state = addresses.get(0).getAdminArea();
                 String sub_admin = addresses.get(0).getSubAdminArea();
                 String city = addresses.get(0).getFeatureName();
-                String pincode = addresses.get(0).getPostalCode();
+                String postal_code = addresses.get(0).getPostalCode();
                 String locality_city = addresses.get(0).getLocality();
-                String sub_localoty = addresses.get(0).getSubLocality();
+                String sub_locality = addresses.get(0).getSubLocality();
                 if (locality != null && country != null) {
-                    this.locationView.setText(locality + ", " + (sub_localoty != null ? sub_localoty + ", " : "")  + (locality_city != null ? locality_city + ", " : "" ) + (city != null ? city + ", " : "")  + (sub_admin != null ? sub_admin + ", " : "") + (state != null ? state + ", " : "") + country + ", " + (pincode != null ? pincode : ""));
+                    this.locationView.setText(locality + ", " + (sub_locality != null ? sub_locality + ", " : "")  + (locality_city != null ? locality_city + ", " : "" ) + (city != null ? city + ", " : "")  + (sub_admin != null ? sub_admin + ", " : "") + (state != null ? state + ", " : "") + country + ", " + (postal_code != null ? postal_code : ""));
                 } else {
                     this.locationView.setText("Location could not be fetched...");
                 }
@@ -184,7 +182,7 @@ public class NewEntry extends AppCompatActivity implements LocationListener {
     }
 
     private void setDate(LocalDate localDate) {
-        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd MMMM yyyy");
         String dateString = dateFormat.format(localDate);
         dateView = findViewById(R.id.date);
         dateView.setText(dateString);
@@ -211,11 +209,13 @@ public class NewEntry extends AppCompatActivity implements LocationListener {
             e.printStackTrace();
             Log.i("info","exception at writeToFile ");
         } finally {
-           try {
-                outputStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-                Log.i("info","exception at writeToFile ");
+            if (outputStream != null) {
+                try {
+                    outputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Log.i("info","exception at writeToFile ");
+                }
             }
         }
 
@@ -233,7 +233,7 @@ public class NewEntry extends AppCompatActivity implements LocationListener {
         String time = timeView.getText().toString();
 
         //convert String to LocalDate and LocalTime
-        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd MMMM yyyy");
         DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("hh:mm a");
         LocalDate localDate = LocalDate.parse(date, dateFormat);
         LocalTime localTime = LocalTime.parse(time, timeFormat);

@@ -12,10 +12,9 @@ import androidx.annotation.Nullable;
 import com.example.photodiary.data.model.DiaryModel;
 import com.example.photodiary.data.model.UserModel;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
@@ -69,8 +68,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         String insertTestAccountStatement =
                 "INSERT INTO " + USER_TABLE +
-                        "(" + USER_EMAIL + ", " + USER_NAME + ", " + USER_PASSWORD + ")" +
-                        "VALUES ('user1@gmail.com', 'User 1', '1234')";
+                        "(" + USER_EMAIL + ", " + USER_NAME + ", " + USER_DOB + ", " + USER_PASSWORD + ")" +
+                        "VALUES ('user1@email.com', 'User 1', '01/01/2022', '1234')";
 
         db.execSQL(createUserTableStatement);
         db.execSQL(createDiaryTableStatement);
@@ -129,13 +128,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             String name = cursor.getString(2);
             String password = cursor.getString(3);
             String gender = cursor.getString(4);
-            String dobString = cursor.getString(6);
-            Date dob;
-            try {
-                dob = new SimpleDateFormat("dd/mm/yyyy").parse(dobString);
-            } catch (Exception e) {
-                dob = null;
-            }
+            String dobString = cursor.getString(5);
+
+            DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            LocalDate dob = LocalDate.parse(dobString, dateFormat);
             String profilePhotoPath = cursor.getString(6);
             user = new UserModel(id, email, name, password, gender, dob, profilePhotoPath);
         } else {
@@ -158,13 +154,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             String name = cursor.getString(2);
             String password = cursor.getString(3);
             String gender = cursor.getString(4);
-            String dobString = cursor.getString(6);
-            Date dob;
-            try {
-                dob = new SimpleDateFormat("dd/mm/yyyy").parse(dobString);
-            } catch (Exception e) {
-                dob = null;
-            }
+            String dobString = cursor.getString(5);
+
+            DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            LocalDate dob = LocalDate.parse(dobString, dateFormat);
             String profilePhotoPath = cursor.getString(6);
             user = new UserModel(id, email, name, password, gender, dob, profilePhotoPath);
         } else {

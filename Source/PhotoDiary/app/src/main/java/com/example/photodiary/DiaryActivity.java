@@ -1,18 +1,14 @@
 package com.example.photodiary;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.photodiary.data.model.DiaryModel;
+import androidx.appcompat.app.AppCompatActivity;
 
 public class DiaryActivity extends AppCompatActivity {
     private EditText diaryTitle, diaryDesc;
@@ -39,6 +35,9 @@ public class DiaryActivity extends AppCompatActivity {
         } else {
             finish();
         }
+
+
+        databaseHelper = new DatabaseHelper(this);
 
         diaryTitle = findViewById(R.id.diaryTitle);
         diaryTitle.setText(title);
@@ -82,7 +81,6 @@ public class DiaryActivity extends AppCompatActivity {
             }
         });
 
-        databaseHelper = new DatabaseHelper(this);
     }
 
 

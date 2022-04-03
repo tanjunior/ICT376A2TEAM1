@@ -1,6 +1,6 @@
 package com.example.photodiary.data.model;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public class UserModel {
     private int id;
@@ -8,12 +8,12 @@ public class UserModel {
     private String name;
     private String password;
     private String gender;
-    private Date dob;
+    private LocalDate dob;
     private String profilePhotoPath;
 
     public UserModel() {}
 
-    public UserModel(int id, String email, String name, String password, String gender, Date dob, String profilePhotoPath) {
+    public UserModel(int id, String email, String name, String password, String gender, LocalDate dob, String profilePhotoPath) {
         this.id = id;
         this.email = email;
         this.name = name;
@@ -71,24 +71,11 @@ public class UserModel {
         this.gender = gender;
     }
 
-    public Date getDob() {
+    public LocalDate getDob() {
         return dob;
     }
 
-    public void setDob(Date dob) {
+    public void setDob(LocalDate dob) {
         this.dob = dob;
-    }
-
-    @Override
-    public String toString() {
-        return "UserModel{" +
-                "id=" + id +
-                ", email='" + email + '\'' +
-                ", name='" + name + '\'' +
-                ", password='" + password + '\'' +
-                ", gender='" + gender + '\'' +
-                ", dob=" + dob +
-                ", profilePhotoPath='" + profilePhotoPath + '\'' +
-                '}';
     }
 }

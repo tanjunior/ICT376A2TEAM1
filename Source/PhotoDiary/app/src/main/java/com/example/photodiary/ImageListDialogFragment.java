@@ -3,25 +3,21 @@ package com.example.photodiary;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
-import androidx.annotation.NonNull;
-
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
-
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.photodiary.databinding.FragmentItemListDialogListDialogItemBinding;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.photodiary.databinding.FragmentItemListDialogListDialogBinding;
+import com.example.photodiary.databinding.FragmentItemListDialogListDialogItemBinding;
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 /**
  * <p>A fragment that shows a list of items as a modal bottom sheet.</p>
@@ -83,7 +79,7 @@ public class ImageListDialogFragment extends BottomSheetDialogFragment {
 
         private final int mItemCount;
         static final int REQUEST_IMAGE_CAPTURE = 1;
-        static final int PICK_IMAGE_CODE = 2;
+        static final int REQUEST_GALLERY_IMAGE = 2;
 
         ImageAdapter(int itemCount) {
             mItemCount = itemCount;
@@ -120,7 +116,7 @@ public class ImageListDialogFragment extends BottomSheetDialogFragment {
                         pickPictureIntent.setAction(Intent.ACTION_PICK);
                         pickPictureIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
                         try {
-                            getActivity().startActivityForResult(pickPictureIntent, PICK_IMAGE_CODE);
+                            getActivity().startActivityForResult(pickPictureIntent, REQUEST_GALLERY_IMAGE);
                         } catch (ActivityNotFoundException e) {
                             // display error state to the user
                         }

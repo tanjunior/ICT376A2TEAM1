@@ -3,12 +3,14 @@ package com.example.photodiary;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.example.photodiary.data.model.DiaryModel;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.photodiary.data.model.DiaryModel;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.List;
 
 public class UserLanding extends AppCompatActivity implements DiariesAdapter.OnDiaryClickListener {

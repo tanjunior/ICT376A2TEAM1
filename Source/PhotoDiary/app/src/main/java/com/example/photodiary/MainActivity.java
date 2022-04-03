@@ -2,11 +2,13 @@ package com.example.photodiary;
 
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
-import com.example.photodiary.data.model.UserModel;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.photodiary.data.model.UserModel;
 
 public class MainActivity extends AppCompatActivity {
 
