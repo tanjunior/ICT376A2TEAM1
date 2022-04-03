@@ -113,24 +113,20 @@ public class NewEntry extends AppCompatActivity implements LocationListener {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Log.d("onActivityResult", "requestCode: " + requestCode + " resultCode: " + resultCode);
-        if (requestCode == 1 && resultCode == -1) {
+        if (requestCode == 1 && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             imageView.setImageBitmap(imageBitmap);
             imageFragment.dismiss();
-        } else if (requestCode == 2 && resultCode == -1) {
-            Uri selectedImage = data.getData();
-            String[] filePathColumn = { MediaStore.Images.Media.DATA };
+        } else if (requestCode == 2 && resultCode == RESULT_OK) {
+            try {
+                Uri uri = data.getData();
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
+                imageView.setImageBitmap(bitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
-            Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
-            cursor.moveToFirst();
-
-            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-            String picturePath = cursor.getString(columnIndex);
-            cursor.close();
-
-            Bitmap imageBitmap = BitmapFactory.decodeFile(picturePath);
-            imageView.setImageBitmap(imageBitmap);
             imageFragment.dismiss();
         }
     }
