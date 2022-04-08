@@ -8,12 +8,12 @@ public class UserModel {
     private String name;
     private String password;
     private String gender;
-    private LocalDate dob;
+    private String dob;
     private String profilePhotoPath;
 
     public UserModel() {}
 
-    public UserModel(int id, String email, String name, String password, String gender, LocalDate dob, String profilePhotoPath) {
+    public UserModel(int id, String email, String name, String password, String gender, String dob, String profilePhotoPath) {
         this.id = id;
         this.email = email;
         this.name = name;
@@ -71,11 +71,11 @@ public class UserModel {
         this.gender = gender;
     }
 
-    public LocalDate getDob() {
+    public String getDob() {
         return dob;
     }
 
-    public void setDob(LocalDate dob) {
+    public void setDob(String dob) {
         this.dob = dob;
     }
 }

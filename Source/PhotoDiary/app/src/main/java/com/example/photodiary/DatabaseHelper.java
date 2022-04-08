@@ -117,6 +117,29 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return insert != -1;
     }
 
+    public boolean updateUser(
+            int userId,
+            String email,
+            String name,
+            String password,
+            String gender,
+            String dob,
+            String profilePhotoPath
+    ) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(USER_EMAIL, email);
+        cv.put(USER_NAME, name);
+        cv.put(USER_PASSWORD, password);
+        cv.put(USER_GENDER, gender);
+        cv.put(USER_DOB, dob);
+        cv.put(USER_PROFILE_PHOTO_PATH, profilePhotoPath);
+
+        int update = db.update(USER_TABLE, cv, USER_ID + " = ?", new String[] { String.valueOf(userId) });
+        db.close();
+        return update != -1;
+    }
+
     public UserModel getUserById(int id) {
         UserModel user;
         String queryString = "SELECT * FROM " + USER_TABLE + " WHERE " + USER_ID + " = " + id;
@@ -128,10 +151,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             String name = cursor.getString(2);
             String password = cursor.getString(3);
             String gender = cursor.getString(4);
-            String dobString = cursor.getString(5);
-
-            DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            LocalDate dob = LocalDate.parse(dobString, dateFormat);
+            String dob = cursor.getString(5);
             String profilePhotoPath = cursor.getString(6);
             user = new UserModel(id, email, name, password, gender, dob, profilePhotoPath);
         } else {
@@ -154,10 +174,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             String name = cursor.getString(2);
             String password = cursor.getString(3);
             String gender = cursor.getString(4);
-            String dobString = cursor.getString(5);
-
-            DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            LocalDate dob = LocalDate.parse(dobString, dateFormat);
+            String dob = cursor.getString(5);
             String profilePhotoPath = cursor.getString(6);
             user = new UserModel(id, email, name, password, gender, dob, profilePhotoPath);
         } else {
