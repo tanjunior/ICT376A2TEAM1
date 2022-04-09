@@ -84,6 +84,31 @@ public class EditProfile extends AppCompatActivity {
         populateProfile();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            // get bitmap
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+
+            // update view
+            ivProfile.setImageBitmap(imageBitmap);
+            imageFragment.dismiss();
+        } else if (requestCode == REQUEST_GALLERY_IMAGE && resultCode == RESULT_OK) {
+
+            try {
+                Uri uri = data.getData();
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
+                ivProfile.setImageBitmap(bitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            imageFragment.dismiss();
+        }
+    }
+
     private void populateProfile() {
         UserModel user = db.getUserById(userId);
 
@@ -152,38 +177,12 @@ public class EditProfile extends AppCompatActivity {
 
         String imagePath = saveImage(imageFileName, bitmap);
 
-        DatabaseHelper db = new DatabaseHelper(this);
         boolean b = db.updateUser(userId, email, name, password, etGender.getText().toString(), etDob.getText().toString(), imagePath);
         if (b) {
             finish();
             Toast.makeText(this,"Updated profile successfully",Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(this,"Failed to update profile",Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            // get bitmap
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-
-            // update view
-            ivProfile.setImageBitmap(imageBitmap);
-            imageFragment.dismiss();
-        } else if (requestCode == REQUEST_GALLERY_IMAGE && resultCode == RESULT_OK) {
-
-            try {
-                Uri uri = data.getData();
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
-                ivProfile.setImageBitmap(bitmap);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            imageFragment.dismiss();
         }
     }
 

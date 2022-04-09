@@ -70,6 +70,31 @@ public class NewUser extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            // get bitmap
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+
+            // update view
+            ivProfile.setImageBitmap(imageBitmap);
+            imageFragment.dismiss();
+        } else if (requestCode == REQUEST_GALLERY_IMAGE && resultCode == RESULT_OK) {
+
+            try {
+                Uri uri = data.getData();
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
+                ivProfile.setImageBitmap(bitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            imageFragment.dismiss();
+        }
+    }
+
     public void createUser(View view) {
         String email = etEmail.getText().toString();
         if (email.trim().isEmpty()) {
@@ -121,31 +146,6 @@ public class NewUser extends AppCompatActivity {
             Toast.makeText(this,"User created successfully",Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(this,"Username already exists!",Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            // get bitmap
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-
-            // update view
-            ivProfile.setImageBitmap(imageBitmap);
-            imageFragment.dismiss();
-        } else if (requestCode == REQUEST_GALLERY_IMAGE && resultCode == RESULT_OK) {
-
-            try {
-                Uri uri = data.getData();
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
-                ivProfile.setImageBitmap(bitmap);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            imageFragment.dismiss();
         }
     }
 
