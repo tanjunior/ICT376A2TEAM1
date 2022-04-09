@@ -1,10 +1,12 @@
 package com.example.photodiary;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -33,22 +35,22 @@ public class DiariesAdapter extends RecyclerView.Adapter<DiariesAdapter.MyViewHo
         void onDiaryClick(int position);
     }
 
-    public static class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public static class MyViewHolder extends RecyclerView.ViewHolder {
         private final TextView title;
         private final ImageView image;
         OnDiaryClickListener onDiaryClickListener;
 
         public MyViewHolder(final View view, OnDiaryClickListener onDiaryClickListener) {
             super(view);
-            this.onDiaryClickListener = onDiaryClickListener;
+            Button button = view.findViewById(R.id.editButton);
             title = view.findViewById(R.id.listTitle);
             image = view.findViewById(R.id.listImage);
-            view.setOnClickListener(this);
-        }
 
-        @Override
-        public void onClick(View v) {
-            onDiaryClickListener.onDiaryClick(getBindingAdapterPosition());
+            button.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    onDiaryClickListener.onDiaryClick(getBindingAdapterPosition());
+                }
+            });
         }
     }
 
