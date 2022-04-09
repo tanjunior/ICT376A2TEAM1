@@ -54,17 +54,14 @@ public class UserLanding extends AppCompatActivity implements DiariesAdapter.OnD
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_edit_profile:
-                Intent intent = new Intent(UserLanding.this, EditProfile.class);
-                intent.putExtra(EditProfile.USER_ID, userId);
-                startActivity(intent);
-                return true;
-            default:
-                // If we got here, the user's action was not recognized.
-                // Invoke the superclass to handle it.
-                return super.onOptionsItemSelected(item);
-        }
+        if (item.getItemId() == R.id.action_edit_profile) {
+            Intent intent = new Intent(UserLanding.this, EditProfile.class);
+            intent.putExtra(EditProfile.USER_ID, userId);
+            startActivity(intent);
+            return true;
+        }// If we got here, the user's action was not recognized.
+        // Invoke the superclass to handle it.
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -103,7 +100,7 @@ public class UserLanding extends AppCompatActivity implements DiariesAdapter.OnD
     @Override
     public void onDiaryClick(int position) {
         DiaryModel diaryModel = diaryModelList.get(position);
-        Intent intent = new Intent(this, DiaryActivity.class);
+        Intent intent = new Intent(this, EditDiaryActivity.class);
         intent.putExtra("id", diaryModel.getId());
         intent.putExtra("title", diaryModel.getTitle());
         intent.putExtra("date", diaryModel.getDate());

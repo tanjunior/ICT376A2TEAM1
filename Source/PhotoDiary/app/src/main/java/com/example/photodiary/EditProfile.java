@@ -1,7 +1,5 @@
 package com.example.photodiary;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -13,11 +11,12 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.util.Patterns;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.photodiary.data.model.UserModel;
 
@@ -37,10 +36,9 @@ public class EditProfile extends AppCompatActivity {
     private static final int REQUEST_GALLERY_IMAGE = 2;
 
     private ImageView ivProfile;
-    private Button btnSave;
     private EditText etEmail, etName, etPassword, etGender, etDob;
 
-    private ImageListDialogFragment imageFragment = ImageListDialogFragment.newInstance(2);
+    private final ImageListDialogFragment imageFragment = ImageListDialogFragment.newInstance(2);
 
     private int userId;
     private DatabaseHelper db;
@@ -60,7 +58,7 @@ public class EditProfile extends AppCompatActivity {
         etPassword = findViewById(R.id.etPassword);
         etGender = findViewById(R.id.etGender);
         etDob = findViewById(R.id.etDob);
-        btnSave = findViewById(R.id.btnSave);
+        Button btnSave = findViewById(R.id.btnSave);
 
         // gender picker
         String[] genders = {"Male", "Female", "Custom"};

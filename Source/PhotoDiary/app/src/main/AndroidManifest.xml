@@ -35,7 +35,7 @@
             android:label="@string/edit_profile"
             android:parentActivityName=".UserLanding" />
         <activity
-            android:name=".DiaryActivity"
+            android:name=".EditDiaryActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

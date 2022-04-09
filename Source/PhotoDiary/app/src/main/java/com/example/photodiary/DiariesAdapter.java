@@ -1,6 +1,5 @@
 package com.example.photodiary;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
@@ -36,21 +35,20 @@ public class DiariesAdapter extends RecyclerView.Adapter<DiariesAdapter.MyViewHo
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
-        private final TextView title;
+        private final TextView title, desc, loc, date, time;
         private final ImageView image;
-        OnDiaryClickListener onDiaryClickListener;
 
         public MyViewHolder(final View view, OnDiaryClickListener onDiaryClickListener) {
             super(view);
             Button button = view.findViewById(R.id.editButton);
             title = view.findViewById(R.id.listTitle);
             image = view.findViewById(R.id.listImage);
+            desc = view.findViewById(R.id.listDesc);
+            loc = view.findViewById(R.id.listLoc);
+            date = view.findViewById(R.id.listDate);
+            time = view.findViewById(R.id.listTime);
 
-            button.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    onDiaryClickListener.onDiaryClick(getBindingAdapterPosition());
-                }
-            });
+            button.setOnClickListener(v -> onDiaryClickListener.onDiaryClick(getBindingAdapterPosition()));
         }
     }
 
@@ -66,6 +64,10 @@ public class DiariesAdapter extends RecyclerView.Adapter<DiariesAdapter.MyViewHo
         DiaryModel diaryModel = diaryModelList.get(position);
 
         holder.title.setText(diaryModel.getTitle());
+        holder.desc.setText(diaryModel.getDescription());
+        holder.date.setText(diaryModel.getDate());
+        holder.time.setText(diaryModel.getTime());
+        holder.loc.setText(diaryModel.getLocation());
 
         File path = new File(diaryModel.getImageUri()+"/"+diaryModel.getFileName());
         FileInputStream fis;
