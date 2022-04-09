@@ -4,9 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.Address;
 import android.location.Geocoder;
@@ -44,6 +42,8 @@ import java.util.Locale;
 public class NewEntry extends AppCompatActivity implements LocationListener {
 
     protected LocationManager locationManager;
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
+    private static final int REQUEST_GALLERY_IMAGE = 2;
     ImageListDialogFragment imageFragment = ImageListDialogFragment.newInstance(2);
     TextView titleView, dateView, timeView, locationView, descriptionView;
     Button saveButton;
@@ -111,24 +111,20 @@ public class NewEntry extends AppCompatActivity implements LocationListener {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Log.d("onActivityResult", "requestCode: " + requestCode + " resultCode: " + resultCode);
-        if (requestCode == 1 && resultCode == -1) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             imageView.setImageBitmap(imageBitmap);
             imageFragment.dismiss();
-        } else if (requestCode == 2 && resultCode == -1) {
-            Uri selectedImage = data.getData();
-            String[] filePathColumn = { MediaStore.Images.Media.DATA };
+        } else if (requestCode == REQUEST_GALLERY_IMAGE && resultCode == RESULT_OK) {
+            try {
+                Uri uri = data.getData();
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
+                imageView.setImageBitmap(bitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
-            Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
-            cursor.moveToFirst();
-
-            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-            String picturePath = cursor.getString(columnIndex);
-            cursor.close();
-
-            Bitmap imageBitmap = BitmapFactory.decodeFile(picturePath);
-            imageView.setImageBitmap(imageBitmap);
             imageFragment.dismiss();
         }
     }
@@ -258,10 +254,9 @@ public class NewEntry extends AppCompatActivity implements LocationListener {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                return true;
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
         }
 
         return super.onOptionsItemSelected(item);

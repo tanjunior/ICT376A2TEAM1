@@ -30,6 +30,14 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PhotoDiary">
         <activity
+            android:name=".EditProfile"
+            android:exported="false"
+            android:label="@string/edit_profile"
+            android:parentActivityName=".UserLanding" />
+        <activity
+            android:name=".EditDiaryActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:theme="@style/Theme.PhotoDiary">

@@ -3,24 +3,20 @@ package com.example.photodiary;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
-import androidx.annotation.NonNull;
-
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
-
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.photodiary.databinding.FragmentItemListDialogListDialogItemBinding;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.photodiary.databinding.FragmentItemListDialogListDialogBinding;
+import com.example.photodiary.databinding.FragmentItemListDialogListDialogItemBinding;
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 /**
  * <p>A fragment that shows a list of items as a modal bottom sheet.</p>
@@ -46,7 +42,7 @@ public class ImageListDialogFragment extends BottomSheetDialogFragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
 
         binding = FragmentItemListDialogListDialogBinding.inflate(inflater, container, false);
@@ -67,7 +63,7 @@ public class ImageListDialogFragment extends BottomSheetDialogFragment {
         binding = null;
     }
 
-    private class ViewHolder extends RecyclerView.ViewHolder {
+    private static class ViewHolder extends RecyclerView.ViewHolder {
 
         final TextView text;
 
@@ -82,7 +78,7 @@ public class ImageListDialogFragment extends BottomSheetDialogFragment {
 
         private final int mItemCount;
         static final int REQUEST_IMAGE_CAPTURE = 1;
-        static final int PICK_IMAGE_CODE = 2;
+        static final int REQUEST_GALLERY_IMAGE = 2;
 
         ImageAdapter(int itemCount) {
             mItemCount = itemCount;
@@ -97,32 +93,28 @@ public class ImageListDialogFragment extends BottomSheetDialogFragment {
         }
 
         @Override
-        public void onBindViewHolder(ViewHolder holder, int position) {
+        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
             if (position == 0) {
                 holder.text.setText("Camera");
-                holder.text.setOnClickListener(new ImageView.OnClickListener() {
-                    public void onClick(View v) {
-                        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        try {
-                            getActivity().startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-                        } catch (ActivityNotFoundException e) {
-                            // display error state to the user
-                        }
+                holder.text.setOnClickListener(v -> {
+                    Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    try {
+                        getActivity().startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                    } catch (ActivityNotFoundException e) {
+                        // display error state to the user
                     }
                 });
             } else {
                 holder.text.setText("Browse");
-                holder.text.setOnClickListener(new ImageView.OnClickListener() {
-                    public void onClick(View v) {
-                        Intent pickPictureIntent = new Intent();
-                        pickPictureIntent.setAction(Intent.ACTION_PICK);
-                        pickPictureIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
-                        try {
-                            getActivity().startActivityForResult(pickPictureIntent, PICK_IMAGE_CODE);
-                        } catch (ActivityNotFoundException e) {
-                            // display error state to the user
-                        }
+                holder.text.setOnClickListener(v -> {
+                    Intent pickPictureIntent = new Intent();
+                    pickPictureIntent.setAction(Intent.ACTION_PICK);
+                    pickPictureIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
+                    try {
+                        getActivity().startActivityForResult(pickPictureIntent, REQUEST_GALLERY_IMAGE);
+                    } catch (ActivityNotFoundException e) {
+                        // display error state to the user
                     }
                 });
             }

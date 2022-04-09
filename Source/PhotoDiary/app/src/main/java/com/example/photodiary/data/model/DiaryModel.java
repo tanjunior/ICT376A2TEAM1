@@ -26,21 +26,6 @@ public class DiaryModel {
         this.userId = userId;
     }
 
-    @Override
-    public String toString() {
-        return "DiaryModel{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", date='" + date + '\'' +
-                ", time='" + time + '\'' +
-                ", location='" + location + '\'' +
-                ", description='" + description + '\'' +
-                ", fileName='" + fileName + '\'' +
-                ", imageUri='" + imageUri + '\'' +
-                ", userId=" + userId +
-                '}';
-    }
-
     public String getFileName() {
         return fileName;
     }

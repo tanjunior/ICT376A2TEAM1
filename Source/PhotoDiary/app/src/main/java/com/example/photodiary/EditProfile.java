@@ -4,18 +4,21 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.util.Patterns;
-import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.photodiary.data.model.UserModel;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -25,7 +28,9 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
-public class NewUser extends AppCompatActivity {
+public class EditProfile extends AppCompatActivity {
+
+    public static final String USER_ID = "USER_ID";
 
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int REQUEST_GALLERY_IMAGE = 2;
@@ -33,12 +38,17 @@ public class NewUser extends AppCompatActivity {
     private ImageView ivProfile;
     private EditText etEmail, etName, etPassword, etGender, etDob;
 
-    ImageListDialogFragment imageFragment = ImageListDialogFragment.newInstance(2);
+    private final ImageListDialogFragment imageFragment = ImageListDialogFragment.newInstance(2);
+
+    private int userId;
+    private DatabaseHelper db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_new_user);
+        setContentView(R.layout.activity_edit_profile);
+        userId = getIntent().getIntExtra(USER_ID, 1);
+        db = new DatabaseHelper(this);
 
         DatePickerFragment datePickerFragment = new DatePickerFragment();
         // init views
@@ -48,6 +58,7 @@ public class NewUser extends AppCompatActivity {
         etPassword = findViewById(R.id.etPassword);
         etGender = findViewById(R.id.etGender);
         etDob = findViewById(R.id.etDob);
+        Button btnSave = findViewById(R.id.btnSave);
 
         // gender picker
         String[] genders = {"Male", "Female", "Custom"};
@@ -59,6 +70,7 @@ public class NewUser extends AppCompatActivity {
         etGender.setOnClickListener(view -> builder.show());
         etDob.setOnClickListener(view -> datePickerFragment.show(getSupportFragmentManager(), "datePicker"));
         ivProfile.setOnClickListener(view -> imageFragment.show(getSupportFragmentManager(), "dialog"));
+        btnSave.setOnClickListener(view -> saveUser());
 
         // fragment result listener
         getSupportFragmentManager().setFragmentResultListener("request_Key", this, (requestKey, bundle) -> {
@@ -68,9 +80,38 @@ public class NewUser extends AppCompatActivity {
                 etDob.setText(dateString);
             }
         });
+
+        populateProfile();
     }
 
-    public void createUser(View view) {
+    private void populateProfile() {
+        UserModel user = db.getUserById(userId);
+
+        etEmail.setText(user.getEmail());
+        etName.setText(user.getName());
+        etPassword.setText(user.getPassword());
+
+        if (user.getGender() != null) {
+            etGender.setText(user.getGender());
+        }
+
+        if (user.getDob() != null) {
+            etDob.setText(user.getDob());
+        }
+
+        if (user.getProfilePhotoPath() != null) {
+            try {
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+                Bitmap bitmap = BitmapFactory.decodeFile(user.getProfilePhotoPath(), options);
+                ivProfile.setImageBitmap(bitmap);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void saveUser() {
         String email = etEmail.getText().toString();
         if (email.trim().isEmpty()) {
             Toast.makeText(this, "email cannot be empty", Toast.LENGTH_SHORT).show();
@@ -109,18 +150,15 @@ public class NewUser extends AppCompatActivity {
         String timeStamp = dateFormat.format(localDatetime);
         String imageFileName = "JPEG_" + timeStamp + "_.jpeg";
 
-
-
         String imagePath = saveImage(imageFileName, bitmap);
 
-
         DatabaseHelper db = new DatabaseHelper(this);
-        boolean b = db.addUser(email, name, password, etGender.getText().toString(), etDob.getText().toString(), imagePath);
+        boolean b = db.updateUser(userId, email, name, password, etGender.getText().toString(), etDob.getText().toString(), imagePath);
         if (b) {
             finish();
-            Toast.makeText(this,"User created successfully",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,"Updated profile successfully",Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(this,"Username already exists!",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,"Failed to update profile",Toast.LENGTH_SHORT).show();
         }
     }
 

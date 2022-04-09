@@ -12,10 +12,7 @@ import androidx.annotation.Nullable;
 import com.example.photodiary.data.model.DiaryModel;
 import com.example.photodiary.data.model.UserModel;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
@@ -69,8 +66,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         String insertTestAccountStatement =
                 "INSERT INTO " + USER_TABLE +
-                        "(" + USER_EMAIL + ", " + USER_NAME + ", " + USER_PASSWORD + ")" +
-                        "VALUES ('user1@gmail.com', 'User 1', '1234')";
+                        "(" + USER_EMAIL + ", " + USER_NAME + ", " + USER_DOB + ", " + USER_PASSWORD + ")" +
+                        "VALUES ('user1@email.com', 'User 1', '01/01/2022', '1234')";
 
         db.execSQL(createUserTableStatement);
         db.execSQL(createDiaryTableStatement);
@@ -118,6 +115,29 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return insert != -1;
     }
 
+    public boolean updateUser(
+            int userId,
+            String email,
+            String name,
+            String password,
+            String gender,
+            String dob,
+            String profilePhotoPath
+    ) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(USER_EMAIL, email);
+        cv.put(USER_NAME, name);
+        cv.put(USER_PASSWORD, password);
+        cv.put(USER_GENDER, gender);
+        cv.put(USER_DOB, dob);
+        cv.put(USER_PROFILE_PHOTO_PATH, profilePhotoPath);
+
+        int update = db.update(USER_TABLE, cv, USER_ID + " = ?", new String[] { String.valueOf(userId) });
+        db.close();
+        return update != -1;
+    }
+
     public UserModel getUserById(int id) {
         UserModel user;
         String queryString = "SELECT * FROM " + USER_TABLE + " WHERE " + USER_ID + " = " + id;
@@ -129,13 +149,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             String name = cursor.getString(2);
             String password = cursor.getString(3);
             String gender = cursor.getString(4);
-            String dobString = cursor.getString(6);
-            Date dob;
-            try {
-                dob = new SimpleDateFormat("dd/mm/yyyy").parse(dobString);
-            } catch (Exception e) {
-                dob = null;
-            }
+            String dob = cursor.getString(5);
             String profilePhotoPath = cursor.getString(6);
             user = new UserModel(id, email, name, password, gender, dob, profilePhotoPath);
         } else {
@@ -158,13 +172,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             String name = cursor.getString(2);
             String password = cursor.getString(3);
             String gender = cursor.getString(4);
-            String dobString = cursor.getString(6);
-            Date dob;
-            try {
-                dob = new SimpleDateFormat("dd/mm/yyyy").parse(dobString);
-            } catch (Exception e) {
-                dob = null;
-            }
+            String dob = cursor.getString(5);
             String profilePhotoPath = cursor.getString(6);
             user = new UserModel(id, email, name, password, gender, dob, profilePhotoPath);
         } else {
@@ -221,5 +229,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         long insert = db.insert(DIARY_TABLE, null, cv);
         db.close();
         return insert != -1;
+    }
+
+    public boolean deleteDiary(int diaryID) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        final int delete = db.delete(DIARY_TABLE, DIARY_ID + " = ?", new String[]{Integer.toString(diaryID)});
+        db.close();
+        return delete > 0;
+    }
+
+    public boolean updateDiary(int diaryID, String title, String desc) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(DIARY_TITLE, title);
+        cv.put(DIARY_DESCRIPTION, desc);
+
+        int update = db.update(DIARY_TABLE, cv, DIARY_ID + " = ?", new String[]{String.valueOf(diaryID)});
+        Log.d("updateDiary", "success"+update);
+        db.close();
+        return update > 0;
     }
 }
