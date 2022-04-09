@@ -12,8 +12,6 @@ import androidx.annotation.Nullable;
 import com.example.photodiary.data.model.DiaryModel;
 import com.example.photodiary.data.model.UserModel;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
