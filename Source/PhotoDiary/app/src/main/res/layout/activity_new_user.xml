@@ -20,12 +20,12 @@
 
     <TextView
         android:id="@+id/tvTakeProfilePic"
+        style="@style/TextAppearance.MaterialComponents.Caption"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Take profile picture"
-        style="@style/TextAppearance.MaterialComponents.Caption"
-        app:layout_constraintStart_toStartOf="parent"
+        android:text="Set your profile picture"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/ivProfile" />
 
     <EditText
